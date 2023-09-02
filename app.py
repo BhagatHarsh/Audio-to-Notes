@@ -77,22 +77,9 @@ def split_mp3_file(file_path, chunk_length_sec, hf_token, delay_sec) -> dict:
     file_length_sec = len(audio) / 1000
     chunk_length_ms = chunk_length_sec * 500
 
-    # Create empty lists to store chunks iteration and errors
-    chunks_iteration = []
-    errors = []
     transcript = ""
 
-    # Display the empty lists
-    st.write("Chunks Iteration:")
-    st.text("\n".join(chunks_iteration))
-    st.write("Errors:")
-    st.text("\n".join(errors))
-    st.write("Transcript:")
-    st.text(transcript)
-
     for i in range(0, len(audio), chunk_length_ms):
-        chunks_iteration.append(
-            f"Processing chunk {i // chunk_length_ms + 1} of {int(file_length_sec // chunk_length_sec) + 1}")
         chunk = audio[i:i + chunk_length_ms]
         file_name = f"{os.path.splitext(file_path)[0]}_{i // chunk_length_ms + 1}.mp3"
         chunk.export(file_name, format="mp3")
@@ -100,33 +87,16 @@ def split_mp3_file(file_path, chunk_length_sec, hf_token, delay_sec) -> dict:
         chunk_text = transcribe_audio(file_name, hf_token)
 
         if chunk_text:
-            chunks_iteration.append(
-                f"Deleting chunk {i // chunk_length_ms + 1} of {int(file_length_sec // chunk_length_sec) + 1}")
             os.remove(file_name)
             time.sleep(delay_sec)
             transcript += chunk_text + " "
-        else:
-            errors.append(
-                f"Transcription failed for chunk {i // chunk_length_ms + 1} of {int(file_length_sec // chunk_length_sec) + 1}")
 
-        # Update the displayed lists after each iteration
-        st.write("Chunks Iteration:")
-        st.text("\n".join(chunks_iteration))
-        st.write("Errors:")
-        st.text("\n".join(errors))
-        st.write("Transcript:")
-        st.text(transcript)
-
-    # Return the chunks iteration, errors, and transcript as a dictionary
-    return {"chunks_iteration": chunks_iteration, "errors": errors, "transcript": transcript}
+    # Return the transcript
+    return {"transcript": transcript}
 
 
 # Call the split_mp3_file() function
 result = split_mp3_file(AUDIO_FILE.rsplit(".", 1)[0] + '.mp3', chunk_size, hf_token, delay)
-errors = result.get("errors", [])
-st.write("Final Errors:")
-st.text("\n".join(errors))
-
 transcript = result.get("transcript", "")
 st.write("Final Transcript:")
 st.text(transcript)
