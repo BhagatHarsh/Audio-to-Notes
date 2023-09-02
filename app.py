@@ -80,6 +80,7 @@ def split_mp3_file(file_path, chunk_length_sec, hf_token, delay_sec) -> dict:
     # Create empty lists to store chunks iteration and errors
     chunks_iteration = []
     errors = []
+    transcript = ""
 
     for i in range(0, len(audio), chunk_length_ms):
         chunks_iteration.append(
@@ -95,12 +96,21 @@ def split_mp3_file(file_path, chunk_length_sec, hf_token, delay_sec) -> dict:
                 f"Deleting chunk {i // chunk_length_ms + 1} of {int(file_length_sec // chunk_length_sec) + 1}")
             os.remove(file_name)
             time.sleep(delay_sec)
+            transcript += chunk_text + " "
         else:
             errors.append(
                 f"Transcription failed for chunk {i // chunk_length_ms + 1} of {int(file_length_sec // chunk_length_sec) + 1}")
 
-    # Return the chunks iteration and errors as a dictionary
-    return {"chunks_iteration": chunks_iteration, "errors": errors}
+        # Display the chunks iteration and errors after each iteration
+        st.write("Chunks Iteration:")
+        st.text("\n".join(chunks_iteration))
+        st.write("Errors:")
+        st.text("\n".join(errors))
+        st.write("Transcript:")
+        st.text(transcript)
+
+    # Return the chunks iteration, errors, and transcript as a dictionary
+    return {"chunks_iteration": chunks_iteration, "errors": errors, "transcript": transcript}
 
 
 # Call the split_mp3_file() function
@@ -108,10 +118,14 @@ result = split_mp3_file(AUDIO_FILE.rsplit(".", 1)[0] + '.mp3', chunk_size, hf_to
 errors = result.get("errors", [])
 st.text("\n".join(errors))
 
-# Display the chunks iteration in scrollable list
+# Display the final chunks iteration, errors, and transcript
 chunks_iteration = result.get("chunks_iteration", [])
-st.write("Chunks Iteration:")
+st.write("Final Chunks Iteration:")
 st.text("\n".join(chunks_iteration))
+
+transcript = result.get("transcript", "")
+st.write("Final Transcript:")
+st.text(transcript)
 
 # Remove all .mp3 and .mp4 files when the program terminates
 def cleanup_files():
@@ -120,3 +134,4 @@ def cleanup_files():
             os.remove(file)
 
 
+cleanup_files()
