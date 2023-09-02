@@ -72,7 +72,7 @@ def transcribe_audio(file_path, hf_token):
     return None
 
 
-@st.cache(allow_output_mutation=True)
+@st.cache
 def split_mp3_file(file_path, chunk_length_sec, hf_token, delay_sec) -> dict:
     audio = AudioSegment.from_mp3(file_path)
     file_length_sec = len(audio) / 1000
