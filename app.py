@@ -82,6 +82,14 @@ def split_mp3_file(file_path, chunk_length_sec, hf_token, delay_sec) -> dict:
     errors = []
     transcript = ""
 
+    # Display the empty lists
+    st.write("Chunks Iteration:")
+    st.text("\n".join(chunks_iteration))
+    st.write("Errors:")
+    st.text("\n".join(errors))
+    st.write("Transcript:")
+    st.text(transcript)
+
     for i in range(0, len(audio), chunk_length_ms):
         chunks_iteration.append(
             f"Processing chunk {i // chunk_length_ms + 1} of {int(file_length_sec // chunk_length_sec) + 1}")
@@ -101,7 +109,7 @@ def split_mp3_file(file_path, chunk_length_sec, hf_token, delay_sec) -> dict:
             errors.append(
                 f"Transcription failed for chunk {i // chunk_length_ms + 1} of {int(file_length_sec // chunk_length_sec) + 1}")
 
-        # Display the chunks iteration and errors after each iteration
+        # Update the displayed lists after each iteration
         st.write("Chunks Iteration:")
         st.text("\n".join(chunks_iteration))
         st.write("Errors:")
@@ -133,5 +141,5 @@ def cleanup_files():
         if file.endswith(".mp3") or file.endswith(".mp4"):
             os.remove(file)
 
-
+# Call the cleanup_files() function
 cleanup_files()
