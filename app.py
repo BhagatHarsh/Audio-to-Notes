@@ -72,7 +72,6 @@ def transcribe_audio(file_path, hf_token):
     return None
 
 
-@st.cache
 def split_mp3_file(file_path, chunk_length_sec, hf_token, delay_sec) -> dict:
     audio = AudioSegment.from_mp3(file_path)
     file_length_sec = len(audio) / 1000
@@ -103,11 +102,6 @@ def split_mp3_file(file_path, chunk_length_sec, hf_token, delay_sec) -> dict:
     # Return the chunks iteration and errors as a dictionary
     return {"chunks_iteration": chunks_iteration, "errors": errors}
 
-
-# Call the cached function outside split_mp3_file()
-result = split_mp3_file(AUDIO_FILE.rsplit(".", 1)[0] + '.mp3', chunk_size, hf_token, delay)
-errors = result.get("errors", [])
-st.text("\n".join(errors))
 
 # Display the chunks iteration in scrollable list
 chunks_iteration = result.get("chunks_iteration", [])
