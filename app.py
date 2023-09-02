@@ -124,12 +124,8 @@ def split_mp3_file(file_path, chunk_length_sec, hf_token, delay_sec) -> dict:
 # Call the split_mp3_file() function
 result = split_mp3_file(AUDIO_FILE.rsplit(".", 1)[0] + '.mp3', chunk_size, hf_token, delay)
 errors = result.get("errors", [])
+st.write("Final Errors:")
 st.text("\n".join(errors))
-
-# Display the final chunks iteration, errors, and transcript
-chunks_iteration = result.get("chunks_iteration", [])
-st.write("Final Chunks Iteration:")
-st.text("\n".join(chunks_iteration))
 
 transcript = result.get("transcript", "")
 st.write("Final Transcript:")
