@@ -1,0 +1,5 @@
+streamlit 
+pydub 
+requests 
+urllib3
+moviepy
