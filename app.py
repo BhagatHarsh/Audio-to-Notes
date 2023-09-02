@@ -37,7 +37,6 @@ if uploaded_file is None:
 file_details = {"FileName": uploaded_file.name, "FileType": uploaded_file.type, "FileSize": uploaded_file.size}
 st.write(file_details)
 
-# Save the uploaded file to the current directory
 with open(uploaded_file.name, 'wb') as f:
     f.write(uploaded_file.getbuffer())
 st.success("Saved File")
@@ -80,6 +79,8 @@ def split_mp3_file(file_path, chunk_length_sec, hf_token, delay_sec) -> dict:
     transcript = ""
 
     for i in range(0, len(audio), chunk_length_ms):
+        if(i == 0):
+            st.write("Transcript:")
         chunk = audio[i:i + chunk_length_ms]
         file_name = f"{os.path.splitext(file_path)[0]}_{i // chunk_length_ms + 1}.mp3"
         chunk.export(file_name, format="mp3")
@@ -89,23 +90,20 @@ def split_mp3_file(file_path, chunk_length_sec, hf_token, delay_sec) -> dict:
         if chunk_text:
             os.remove(file_name)
             time.sleep(delay_sec)
-            transcript += chunk_text + " "
+            transcript += chunk_text + "\n"
+            st.text(transcript)
 
-    # Return the transcript
     return {"transcript": transcript}
 
 
-# Call the split_mp3_file() function
 result = split_mp3_file(AUDIO_FILE.rsplit(".", 1)[0] + '.mp3', chunk_size, hf_token, delay)
 transcript = result.get("transcript", "")
 st.write("Final Transcript:")
 st.text(transcript)
 
-# Remove all .mp3 and .mp4 files when the program terminates
 def cleanup_files():
     for file in os.listdir():
         if file.endswith(".mp3") or file.endswith(".mp4"):
             os.remove(file)
 
-# Call the cleanup_files() function
 cleanup_files()
