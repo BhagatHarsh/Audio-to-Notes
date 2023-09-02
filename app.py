@@ -22,7 +22,7 @@ if not hf_token:
     st.warning("Please enter your Hugging Face API token.")
     st.stop()
 
-delay = st.text_input("Enter the delay in seconds between API requests (default: 1)", "1")
+delay = st.text_input("Enter the delay in seconds between API requests (default: 1)", "2")
 try:
     delay = float(delay)
 except ValueError:
@@ -90,7 +90,7 @@ def split_mp3_file(file_path, chunk_length_sec, hf_token, delay_sec) -> dict:
         if chunk_text:
             os.remove(file_name)
             time.sleep(delay_sec)
-            transcript += chunk_text + "\n"
+            transcript = str(i+1) + ') ' + chunk_text + "\n"
             st.text(transcript)
 
     return {"transcript": transcript}
