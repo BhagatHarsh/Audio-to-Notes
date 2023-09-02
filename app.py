@@ -103,6 +103,7 @@ def split_mp3_file(file_path, chunk_length_sec, hf_token, delay_sec) -> dict:
     return {"chunks_iteration": chunks_iteration, "errors": errors}
 
 
+# Call the split_mp3_file() function
 result = split_mp3_file(AUDIO_FILE.rsplit(".", 1)[0] + '.mp3', chunk_size, hf_token, delay)
 errors = result.get("errors", [])
 st.text("\n".join(errors))
@@ -119,4 +120,3 @@ def cleanup_files():
             os.remove(file)
 
 
-cleanup_files()
