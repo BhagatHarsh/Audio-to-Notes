@@ -42,6 +42,7 @@ with open(uploaded_file.name, 'wb') as f:
 st.success("Saved File")
 
 AUDIO_FILE = os.path.join(os.getcwd(), uploaded_file.name)
+finalTranscript = ""
 
 if uploaded_file.type == 'audio/mp3':
     st.write("File is mp3")
@@ -76,8 +77,7 @@ def split_mp3_file(file_path, chunk_length_sec, hf_token, delay_sec) -> dict:
     file_length_sec = len(audio) / 1000
     chunk_length_ms = chunk_length_sec * 500
 
-    transcript = ""
-
+    
     for i in range(0, len(audio), chunk_length_ms):
         if(i == 0):
             st.write("Transcript:")
@@ -90,20 +90,20 @@ def split_mp3_file(file_path, chunk_length_sec, hf_token, delay_sec) -> dict:
         if chunk_text:
             os.remove(file_name)
             time.sleep(delay_sec)
-            transcript = str(i+1) + ') ' + chunk_text + "\n"
-            st.text(transcript)
+            finalTranscript += chunk_text
+            st.write(chunk_text)
 
     return {"transcript": transcript}
 
 
 result = split_mp3_file(AUDIO_FILE.rsplit(".", 1)[0] + '.mp3', chunk_size, hf_token, delay)
-transcript = result.get("transcript", "")
 st.write("Final Transcript:")
-st.text(transcript)
+st.write(finalTranscript)
 
 def cleanup_files():
     for file in os.listdir():
         if file.endswith(".mp3") or file.endswith(".mp4"):
             os.remove(file)
+    finalTranscript = ""
 
 cleanup_files()
