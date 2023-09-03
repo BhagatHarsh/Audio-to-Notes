@@ -73,6 +73,7 @@ def transcribe_audio(file_path, hf_token):
 
 
 def split_mp3_file(file_path, chunk_length_sec, hf_token, delay_sec) -> dict:
+    global finalTranscript
     audio = AudioSegment.from_mp3(file_path)
     file_length_sec = len(audio) / 1000
     chunk_length_ms = chunk_length_sec * 500
@@ -101,6 +102,7 @@ st.write("Final Transcript:")
 st.write(finalTranscript)
 
 def cleanup_files():
+    global finalTranscript
     for file in os.listdir():
         if file.endswith(".mp3") or file.endswith(".mp4"):
             os.remove(file)
